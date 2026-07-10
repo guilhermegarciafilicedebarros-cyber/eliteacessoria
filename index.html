@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>Análise de Mercado Imobiliário - Brasília</title>
+<meta name="description" content="Análise estratégica do mercado imobiliário de Brasília: dados, gargalos e oportunidades para corretores." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root{
+    --bg:#0A1628;
+    --fg:#E8F0FA;
+    --card:#0F2138;
+    --secondary:#142B45;
+    --muted:#6B8AAB;
+    --muted2:#A8C5E0;
+    --primary:#00E5FF;
+    --amber:#FFB800;
+    --green:#00E676;
+    --red:#FF5252;
+    --purple:#7C4DFF;
+    --border: rgba(255,255,255,0.08);
+    --radius: 0.65rem;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:"Inter", sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4,h5,h6{font-family:"Space Grotesk", sans-serif; margin:0;}
+  p{margin:0;}
+  a{text-decoration:none; color:inherit;}
+  img{max-width:100%; display:block;}
+  ul{margin:0; padding:0; list-style:none;}
+
+  .container{
+    width:100%;
+    max-width:1152px;
+    margin:0 auto;
+    padding:0 1rem;
+  }
+
+  /* NAV */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    transition:all .3s ease;
+    background:transparent;
+  }
+  nav.scrolled{
+    background:rgba(10,22,40,0.9);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+  .nav-inner{
+    max-width:1152px; margin:0 auto; padding:1rem;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{display:flex; align-items:center; gap:.5rem;}
+  .brand .logo-badge{
+    width:2rem; height:2rem; border-radius:.5rem;
+    background:linear-gradient(135deg,var(--primary),var(--purple));
+    display:flex; align-items:center; justify-content:center;
+    color:#0A1628; flex-shrink:0;
+  }
+  .brand span{font-weight:700; font-size:1.125rem;}
+  .brand .accent{color:var(--primary);}
+  .nav-links{display:none; align-items:center; gap:1.5rem;}
+  .nav-links a{font-size:.875rem; color:var(--muted2); transition:color .2s;}
+  .nav-links a:hover{color:var(--primary);}
+  .nav-cta{
+    padding:.5rem 1rem; border-radius:.5rem;
+    background:rgba(0,229,255,0.1); color:var(--primary);
+    font-size:.875rem; font-weight:600; transition:all .2s; border:none;
+  }
+  .nav-cta:hover{background:rgba(0,229,255,0.2);}
+  @media(min-width:768px){ .nav-links{display:flex;} }
+
+  /* HERO */
+  .hero{
+    position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    overflow:hidden; text-align:center; padding:6rem 1rem 2rem;
+  }
+  .hero-bg{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(0,229,255,0.18), transparent 40%),
+      radial-gradient(circle at 80% 30%, rgba(124,77,255,0.18), transparent 45%),
+      radial-gradient(circle at 50% 80%, rgba(0,230,118,0.12), transparent 45%),
+      linear-gradient(180deg, #0c1c33 0%, #0A1628 60%);
+  }
+  .hero-bg::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+  }
+  .hero-gradient-fade{
+    position:absolute; inset:0;
+    background:linear-gradient(to bottom, rgba(10,22,40,0.7), rgba(10,22,40,0.85) 60%, var(--bg));
+  }
+  .hero-content{position:relative; z-index:2; max-width:56rem; margin:0 auto;}
+  .pill{
+    display:inline-flex; align-items:center; gap:.5rem; padding:.5rem 1rem; border-radius:999px;
+    margin-bottom:2rem;
+  }
+  .pill-dot{width:.5rem; height:.5rem; border-radius:999px; background:var(--green); animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.4;}}
+  .pill span{font-size:.875rem; color:var(--muted2);}
+  .hero h1{font-size:2.75rem; font-weight:700; color:#fff; line-height:1.15; margin-bottom:1.5rem;}
+  .hero-number{
+    font-family:"Space Grotesk", sans-serif; font-weight:700;
+    background:linear-gradient(135deg,#00E5FF 0%, #FFB800 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .hero p.lead{font-size:1.15rem; color:var(--muted2); max-width:38rem; margin:0 auto 2.5rem; line-height:1.6;}
+  .hero-actions{display:flex; flex-wrap:wrap; justify-content:center; gap:1rem;}
+  .btn{
+    padding:1rem 2rem; border-radius:.75rem; font-weight:700; font-size:1.05rem;
+    font-family:"Space Grotesk", sans-serif; transition:all .25s; border:none; cursor:pointer; display:inline-block;
+  }
+  .btn-primary{background:var(--primary); color:#0A1628;}
+  .btn-primary:hover{transform:scale(1.05); box-shadow:0 10px 30px rgba(0,229,255,0.3);}
+  .btn-ghost{color:#fff;}
+  .btn-ghost:hover{border-color:rgba(0,229,255,0.5);}
+  .hero-stats{margin-top:4rem; display:flex; flex-wrap:wrap; justify-content:center; gap:2rem; text-align:center;}
+  .hero-stats .stat-num{font-size:1.875rem; font-weight:700;}
+  .hero-stats .stat-label{font-size:.85rem; color:var(--muted); margin-top:.25rem;}
+  .stat-divider{width:1px; height:3rem; background:rgba(255,255,255,0.1);}
+
+  /* SECTIONS */
+  section.block{padding:5rem 1rem; opacity:0; transform:translateY(2.5rem); transition:all .7s cubic-bezier(.23,1,.32,1);}
+  section.block.in-view{opacity:1; transform:translateY(0);}
+  .section-label{margin-bottom:3rem;}
+  .section-label .tag-row{display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;}
+  .section-label .num{color:var(--primary); font-family:monospace; font-size:.875rem; font-weight:700; letter-spacing:.05em;}
+  .section-label .glow-line{height:1px; width:3rem; background:rgba(0,229,255,0.4);}
+  .section-label h2{font-size:2rem; font-weight:700; color:#fff; margin-bottom:.75rem;}
+  .section-label .subtitle{font-size:1.05rem; color:var(--muted); max-width:42rem; line-height:1.5;}
+  @media(min-width:768px){ .section-label h2{font-size:2.75rem;} }
+
+  /* GRID */
+  .grid{display:grid; gap:1.5rem;}
+  .grid-2{grid-template-columns:1fr;}
+  .grid-3{grid-template-columns:1fr;}
+  .grid-4{grid-template-columns:1fr;}
+  @media(min-width:768px){
+    .grid-2{grid-template-columns:1fr 1fr;}
+    .grid-3{grid-template-columns:repeat(3,1fr);}
+    .grid-4{grid-template-columns:repeat(4,1fr);}
+  }
+  @media(min-width:1024px){
+    .grid-lg-4{grid-template-columns:repeat(4,1fr);}
+  }
+  .mb-8{margin-bottom:2rem;}
+
+  /* CARD */
+  .card{
+    background:rgba(15,33,56,0.6); backdrop-filter:blur(12px);
+    border:1px solid var(--border); border-radius:var(--radius);
+    padding:1.5rem; transition:all .3s cubic-bezier(.23,1,.32,1);
+  }
+  .card:hover{border-color:rgba(0,229,255,0.3); box-shadow:0 0 30px rgba(0,229,255,0.1); transform:translateY(-2px);}
+  .card h3{font-size:1.25rem; font-weight:700; color:#fff; margin-bottom:.25rem;}
+  .card .card-sub{font-size:.875rem; color:var(--muted); margin-bottom:1.5rem;}
+
+  /* KPI */
+  .kpi{text-align:center;}
+  .kpi-icon{
+    width:3.5rem; height:3.5rem; border-radius:1rem; display:flex; align-items:center; justify-content:center;
+    margin:0 auto 1rem;
+  }
+  .kpi-value{font-size:2.5rem; font-weight:700; margin-bottom:.5rem;}
+  .kpi-label{font-size:.875rem; color:var(--muted);}
+  @media(min-width:768px){ .kpi-value{font-size:3rem;} }
+
+  /* progress bars */
+  .zone-item{margin-bottom:1rem;}
+  .zone-item:last-child{margin-bottom:0;}
+  .zone-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:.35rem;}
+  .zone-name{color:#fff; font-weight:600; font-size:.875rem;}
+  .zone-desc{color:var(--muted); font-size:.75rem; margin-left:.5rem;}
+  .zone-track{height:.75rem; border-radius:999px; background:rgba(255,255,255,0.05); overflow:hidden;}
+  .zone-fill{height:100%; border-radius:999px; width:0; transition:width 1.2s cubic-bezier(.23,1,.32,1);}
+
+  /* list rows (google/meta comparison) */
+  .icon-box{width:3rem; height:3rem; border-radius:.75rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .cmp-head{display:flex; align-items:center; gap:.75rem; margin-bottom:1rem;}
+  .cmp-head h3{font-size:1.25rem; font-weight:700; color:#fff;}
+  .cmp-head p{font-size:.875rem; color:var(--muted);}
+  .cmp-row{display:flex; justify-content:space-between; align-items:center; padding-bottom:.5rem; margin-bottom:.75rem; border-bottom:1px solid var(--border);}
+  .cmp-row:last-child{border-bottom:none; margin-bottom:0;}
+  .cmp-label{color:var(--muted2); font-size:.875rem;}
+  .cmp-value{font-size:.875rem; font-weight:600;}
+  .cmp-pos{color:var(--green);}
+  .cmp-neg{color:var(--amber);}
+
+  .callout{margin-top:1.5rem; padding:1.5rem; display:flex; align-items:flex-start; gap:1rem;}
+  .callout .icon-box{width:2.5rem; height:2.5rem;}
+  .callout h4{color:#fff; font-weight:700; margin-bottom:.25rem;}
+  .callout p{color:var(--muted2); font-size:.875rem; line-height:1.6;}
+
+  /* feature list with icon */
+  .feature-row{display:flex; align-items:flex-start; gap:1rem;}
+  .feature-row h4{color:#fff; font-weight:700; margin-bottom:.25rem;}
+  .feature-row p{color:var(--muted2); font-size:.875rem; line-height:1.6;}
+  .stack > .card{margin-bottom:1rem;}
+  .stack > .card:last-child{margin-bottom:0;}
+
+  /* pie legend */
+  .legend-item{display:flex; align-items:center; gap:.75rem; margin-top:.5rem;}
+  .legend-dot{width:.75rem; height:.75rem; border-radius:999px; flex-shrink:0;}
+  .legend-name{color:var(--muted2); font-size:.875rem; flex:1;}
+  .legend-val{color:#fff; font-weight:700; font-size:.875rem;}
+
+  /* content cards */
+  .content-card .icon-box{margin-bottom:1rem;}
+  .content-card h4{color:#fff; font-weight:700; margin-bottom:.5rem;}
+  .content-card p{color:var(--muted2); font-size:.875rem; line-height:1.6; margin-bottom:1rem;}
+  .content-card .big{font-size:1.5rem; font-weight:700;}
+  .content-card .big-label{font-size:.75rem; color:var(--muted);}
+
+  /* future / 2030 grid */
+  .trio{text-align:center;}
+  .trio .icon-box{margin:0 auto .75rem;}
+  .trio h4{color:#fff; font-weight:700; margin-bottom:.25rem;}
+  .trio p{color:var(--muted2); font-size:.875rem;}
+
+  /* CTA */
+  .cta-section{position:relative; padding:6rem 1rem; overflow:hidden; text-align:center;}
+  .cta-glow{position:absolute; inset:0; background:linear-gradient(to bottom, transparent, rgba(0,229,255,0.05), transparent);}
+  .cta-inner{position:relative; z-index:2; max-width:56rem; margin:0 auto;}
+  .cta-inner h2{font-size:2.25rem; font-weight:700; color:#fff; margin-bottom:1.5rem; line-height:1.2;}
+  @media(min-width:768px){ .cta-inner h2{font-size:3.5rem;} }
+  .cta-inner p.lead{font-size:1.15rem; color:var(--muted2); max-width:38rem; margin:0 auto 2.5rem; line-height:1.6;}
+  .cta-features{display:grid; grid-template-columns:1fr; gap:1.5rem; max-width:44rem; margin:3rem auto 0;}
+  @media(min-width:768px){ .cta-features{grid-template-columns:repeat(3,1fr);} }
+  .cta-features .trio .icon-box{width:3rem; height:3rem; border-radius:.75rem; background:rgba(0,229,255,0.1);}
+  .cta-features h4{font-size:.875rem;}
+  .cta-features p{font-size:.75rem; color:var(--muted);}
+
+  footer{padding:3rem 1rem; border-top:1px solid var(--border); text-align:center;}
+  footer .brand{justify-content:center; margin-bottom:1rem;}
+  footer p{color:var(--muted); font-size:.875rem; margin-bottom:.5rem;}
+  footer p.small{font-size:.75rem;}
+
+  .chart-wrap{position:relative; width:100%;}
+  canvas{max-width:100%;}
+
+  .glow-underline{position:absolute; bottom:0; left:0; right:0; height:8rem; background:linear-gradient(to top, var(--bg), transparent); pointer-events:none;}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="brand">
+      <span class="logo-badge"><i data-lucide="building-2" style="width:18px;height:18px;"></i></span>
+      <span>Imobi<span class="accent">Data</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#estrutura">Mercado</a>
+      <a href="#economia">Economia</a>
+      <a href="#trafego">Tráfego Pago</a>
+      <a href="#jornada">Jornada</a>
+      <a href="#gargalos">Gargalos</a>
+      <a href="#oportunidades">Oportunidades</a>
+      <a href="#futuro">Futuro</a>
+    </div>
+    <a href="#cta" class="nav-cta">Aplicar</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-gradient-fade"></div>
+  <div class="hero-content">
+    <div class="pill card" style="display:inline-flex;">
+      <span class="pill-dot"></span>
+      <span>Análise estratégica 2025</span>
+    </div>
+    <h1>Mercado Imobiliário<br><span class="hero-number">de Brasília</span></h1>
+    <p class="lead">Os dados que separam os corretores de elite dos 90% que apenas sobrevivem. Um mapa completo para dominar o tráfego pago no setor.</p>
+    <div class="hero-actions">
+      <a href="#estrutura" class="btn btn-primary">Ver análise completa</a>
+      <a href="#cta" class="btn btn-ghost card">Quero aplicar isso</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num hero-number">15 mil</div><div class="stat-label">Corretores ativos no DF</div></div>
+      <div class="stat-divider"></div>
+      <div><div class="stat-num hero-number">R$ 13 bi</div><div class="stat-label">Movimentados em 2025</div></div>
+      <div class="stat-divider"></div>
+      <div><div class="stat-num hero-number">1%</div><div class="stat-label">Taxa de conversão de leads</div></div>
+    </div>
+  </div>
+  <div class="glow-underline"></div>
+</section>
+
+<!-- 01 ESTRUTURA -->
+<section class="block" id="estrutura">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">01</span><div class="glow-line"></div></div>
+      <h2>Estrutura do Mercado</h2>
+      <p class="subtitle">Um mercado fragmentado com 15 mil corretores, mas onde menos de 10% faturam alto regularmente.</p>
+    </div>
+
+    <div class="grid grid-3 mb-8">
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#00E5FF15;"><i data-lucide="users" style="color:#00E5FF;"></i></div>
+        <div class="kpi-value hero-number">15.000+</div>
+        <div class="kpi-label">Corretores ativos no CRECI-DF</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#FFB80015;"><i data-lucide="building-2" style="color:#FFB800;"></i></div>
+        <div class="kpi-value hero-number">&lt; 5%</div>
+        <div class="kpi-label">Imobiliárias em grandes redes franqueadas</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#00E67615;"><i data-lucide="home" style="color:#00E676;"></i></div>
+        <div class="kpi-value hero-number">60%</div>
+        <div class="kpi-label">Negociações sem participação de corretor</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Transações por corretor / ano</h3>
+        <p class="card-sub">A diferença entre a média e os top agents é abismal</p>
+        <div class="chart-wrap" style="height:280px;"><canvas id="chartCorretores"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Zonas de maior atividade</h3>
+        <p class="card-sub">Concentração de lançamentos e VGV no DF</p>
+        <div id="zonasList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 ECONOMIA -->
+<section class="block" id="economia">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">02</span><div class="glow-line"></div></div>
+      <h2>Economia do Corretor</h2>
+      <p class="subtitle">Comissão de 4-6%, mas a margem líquida real é modesta. O segredo está no volume de leads qualificados.</p>
+    </div>
+
+    <div class="grid grid-2 mb-8">
+      <div class="card">
+        <h3>Custo por lead (CPL)</h3>
+        <p class="card-sub">Variação por faixa de imóvel</p>
+        <div class="chart-wrap" style="height:250px;"><canvas id="chartCpl"></canvas></div>
+        <div style="display:flex; justify-content:space-between; font-size:.75rem; color:var(--muted); margin-top:.5rem;">
+          <span>Popular: R$ 5 - R$ 20</span>
+          <span>Alto padrão: R$ 40 - R$ 100</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Investimento em marketing (% do VGV)</h3>
+        <p class="card-sub">Faixa recomendada por especialistas do setor</p>
+        <div class="chart-wrap" style="height:250px;"><canvas id="chartVgv"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid grid-4">
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#00E5FF15;"><i data-lucide="dollar-sign" style="color:#00E5FF;"></i></div>
+        <div class="kpi-value hero-number">4-6%</div>
+        <div class="kpi-label">Comissão sobre o imóvel</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#FFB80015;"><i data-lucide="trending-up" style="color:#FFB800;"></i></div>
+        <div class="kpi-value hero-number">~50%</div>
+        <div class="kpi-label">Margem líquida após impostos</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#00E67615;"><i data-lucide="target" style="color:#00E676;"></i></div>
+        <div class="kpi-value hero-number">50-100</div>
+        <div class="kpi-label">Leads necessários por venda</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#7C4DFF15;"><i data-lucide="zap" style="color:#7C4DFF;"></i></div>
+        <div class="kpi-value hero-number">1-1.5%</div>
+        <div class="kpi-label">Taxa de conversão lead → venda</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 TRÁFEGO PAGO -->
+<section class="block" id="trafego">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">03</span><div class="glow-line"></div></div>
+      <h2>Mercado de Tráfego Pago</h2>
+      <p class="subtitle">Google Ads captura demanda ativa. Meta Ads cria demanda e constrói marca. A estratégia vencedora usa ambos.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="cmp-head">
+          <div class="icon-box" style="background:#00E5FF15;"><i data-lucide="search" style="color:#00E5FF;"></i></div>
+          <div><h3>Google Ads</h3><p>Captura de demanda ativa</p></div>
+        </div>
+        <div class="cmp-row"><span class="cmp-label">Qualidade dos leads</span><span class="cmp-value cmp-pos">Alta intenção</span></div>
+        <div class="cmp-row"><span class="cmp-label">Conversão</span><span class="cmp-value cmp-pos">Melhor ROI por lead</span></div>
+        <div class="cmp-row"><span class="cmp-label">CPC</span><span class="cmp-value cmp-neg">Mais alto</span></div>
+        <div class="cmp-row"><span class="cmp-label">Função</span><span class="cmp-value cmp-pos">Quem já está pronto para comprar</span></div>
+      </div>
+
+      <div class="card">
+        <div class="cmp-head">
+          <div class="icon-box" style="background:#7C4DFF15;"><i data-lucide="instagram" style="color:#7C4DFF;"></i></div>
+          <div><h3>Meta Ads (Facebook/Instagram)</h3><p>Criação de demanda e marca</p></div>
+        </div>
+        <div class="cmp-row"><span class="cmp-label">Custo por lead</span><span class="cmp-value cmp-pos">Mais barato</span></div>
+        <div class="cmp-row"><span class="cmp-label">Segmentação</span><span class="cmp-value cmp-pos">Visual e comportamental</span></div>
+        <div class="cmp-row"><span class="cmp-label">Qualidade dos leads</span><span class="cmp-value cmp-neg">Topo de funil</span></div>
+        <div class="cmp-row"><span class="cmp-label">Função</span><span class="cmp-value cmp-pos">Gera volume e reconhecimento</span></div>
+      </div>
+    </div>
+
+    <div class="card callout">
+      <div class="icon-box" style="background:#00E5FF15;"><i data-lucide="lightbulb" style="color:#00E5FF;"></i></div>
+      <div>
+        <h4>Estratégia recomendada</h4>
+        <p>Usar <span style="color:#00E5FF; font-weight:600;">Google Ads para captar quem já está pronto para comprar</span> e <span style="color:#7C4DFF; font-weight:600;">Meta Ads para gerar volume e reconhecimento de marca</span>. A combinação dos dois canais maximiza tanto a conversão imediata quanto o pipeline de longo prazo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 JORNADA -->
+<section class="block" id="jornada">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">04</span><div class="glow-line"></div></div>
+      <h2>Jornada Completa do Cliente</h2>
+      <p class="subtitle">O comprador brasiliense consome conteúdo antes de buscar anúncios. O WhatsApp é o canal de fechamento.</p>
+    </div>
+
+    <div class="grid grid-2 mb-8">
+      <div class="card">
+        <h3>Funil de conversão de leads</h3>
+        <p class="card-sub">Da captação ao fechamento</p>
+        <div class="chart-wrap" style="height:300px;"><canvas id="chartFunil"></canvas></div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#7C4DFF15;"><i data-lucide="instagram" style="color:#7C4DFF;"></i></div>
+            <div><h4>Inspiração (Topo)</h4><p>Instagram e TikTok: vídeos de visitas guiadas, dicas de bairro, estilo de vida. O cliente se apaixona antes de procurar.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#00E5FF15;"><i data-lucide="search" style="color:#00E5FF;"></i></div>
+            <div><h4>Busca ativa (Meio)</h4><p>Google e portais (Zap, OLX): o cliente valida dados, compara preços e confirma informações do imóvel.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#00E67615;"><i data-lucide="message-circle" style="color:#00E676;"></i></div>
+            <div><h4>Negociação (Fundo)</h4><p>WhatsApp: orçamentos, agendamento de visitas e fechamento. O corretor que responde rápido ganha.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#00E5FF15;"><i data-lucide="home" style="color:#00E5FF;"></i></div>
+        <div class="kpi-value hero-number">2-5</div>
+        <div class="kpi-label">Imóveis visitados por comprador</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#FFB80015;"><i data-lucide="target" style="color:#FFB800;"></i></div>
+        <div class="kpi-value hero-number">Meses</div>
+        <div class="kpi-label">Duração média do ciclo de compra</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-icon" style="background:#00E67615;"><i data-lucide="eye" style="color:#00E676;"></i></div>
+        <div class="kpi-value hero-number">90%+</div>
+        <div class="kpi-label">Verificam o corretor no Instagram antes de contatar</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 MARKETING -->
+<section class="block" id="marketing">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">05</span><div class="glow-line"></div></div>
+      <h2>Marketing dos Melhores Corretores</h2>
+      <p class="subtitle">Os top agents se diferenciam por marketing consistente, equipe profissional e tecnologia. Não é sorte, é estrutura.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Mix de conteúdo dos top agents</h3>
+        <p class="card-sub">A proporção que gera engajamento e autoridade</p>
+        <div class="chart-wrap" style="height:280px;"><canvas id="chartMix"></canvas></div>
+        <div id="mixLegend"></div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#00E5FF15;"><i data-lucide="zap" style="color:#00E5FF;"></i></div>
+            <div><h4>Tecnologia e CRM</h4><p>CRM integrado, automações de WhatsApp, chatbots e IA para qualificar leads. Resposta em minutos, não horas.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#FFB80015;"><i data-lucide="users" style="color:#FFB800;"></i></div>
+            <div><h4>Equipe profissional</h4><p>Fotógrafos, videomakers e SDRs dedicados. O corretor de elite não faz tudo sozinho.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#00E67615;"><i data-lucide="trending-up" style="color:#00E676;"></i></div>
+            <div><h4>Frequência de publicação</h4><p>Vários vídeos e posts por semana. Consistência que constrói audiência e autoridade local.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#7C4DFF15;"><i data-lucide="rocket" style="color:#7C4DFF;"></i></div>
+            <div><h4>Investimento em ads</h4><p>2-5% do faturamento em marketing digital, distribuído entre Google e Meta Ads.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 CONTEUDO -->
+<section class="block" id="conteudo">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">06</span><div class="glow-line"></div></div>
+      <h2>Conteúdo que Gera Clientes</h2>
+      <p class="subtitle">Conteúdo educativo e local gera mais leads qualificados do que vitrines estáticas de imóveis.</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card content-card">
+        <div class="icon-box" style="background:#00E5FF15;"><i data-lucide="bar-chart-3" style="color:#00E5FF;"></i></div>
+        <h4>Análises de bairro</h4>
+        <p>"Quanto custa morar na Asa Norte", "Comparativo de custo de vida entre bairros". Reels de 60-90s com alto potencial viral.</p>
+        <div class="big hero-number">40%</div>
+        <div class="big-label">do conteúdo recomendado</div>
+      </div>
+      <div class="card content-card">
+        <div class="icon-box" style="background:#FFB80015;"><i data-lucide="home" style="color:#FFB800;"></i></div>
+        <h4>Tours de imóveis</h4>
+        <p>Vídeos de visita guiada contextualizados com bairro e estilo de vida. Não basta filmar o imóvel, é preciso contar a história.</p>
+        <div class="big hero-number">20%</div>
+        <div class="big-label">do conteúdo recomendado</div>
+      </div>
+      <div class="card content-card">
+        <div class="icon-box" style="background:#00E67615;"><i data-lucide="lightbulb" style="color:#00E676;"></i></div>
+        <h4>Educativo e relacionamento</h4>
+        <p>Guias de financiamento, comprar vs alugar, dicas de reforma. Bastidores e depoimentos que constroem confiança.</p>
+        <div class="big hero-number">40%</div>
+        <div class="big-label">do conteúdo recomendado</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 GARGALOS -->
+<section class="block" id="gargalos">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">07</span><div class="glow-line"></div></div>
+      <h2>Gargalos do Mercado</h2>
+      <p class="subtitle">Mais de 20% das negociações abortam por financiamento. A conversão de leads é minúscula. Quem resolve isso, ganha.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Motivos de desistência</h3>
+        <p class="card-sub">Índice de Confiança Imobiliária</p>
+        <div class="chart-wrap" style="height:300px;"><canvas id="chartGargalos"></canvas></div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#FF525215;"><i data-lucide="alert-triangle" style="color:#FF5252;"></i></div>
+            <div><h4>Financiamento restrito</h4><p>22% desistem pelo custo do crédito e 21% por parcelas altas. 16% têm crédito reprovado. Educar o cliente sobre crédito é vital.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#FFB80015;"><i data-lucide="target" style="color:#FFB800;"></i></div>
+            <div><h4>Baixa conversão de leads</h4><p>Apenas ~1% dos leads fecham negócio. Sem CRM e follow-up ágil, a maioria esfria e se perde. Atendimento lento mata vendas.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="feature-row">
+            <div class="icon-box" style="background:#7C4DFF15;"><i data-lucide="building-2" style="color:#7C4DFF;"></i></div>
+            <div><h4>Captação e burocracia</h4><p>Conseguir mandatos de venda é difícil. Cada negócio envolve documentação, cartório e certidões — a complexidade afasta clientes.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 OPORTUNIDADES -->
+<section class="block" id="oportunidades">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">08</span><div class="glow-line"></div></div>
+      <h2>Oportunidades Escondidas</h2>
+      <p class="subtitle">Especializar-se em nichos específicos gera ganhos superiores. Menos concorrência, mais autoridade, comissões maiores.</p>
+    </div>
+
+    <div class="grid grid-4">
+      <div class="card">
+        <div class="icon-box" style="background:#00E5FF15; margin-bottom:1rem;"><i data-lucide="users" style="color:#00E5FF;"></i></div>
+        <h4 style="color:#fff; font-weight:700; margin-bottom:.5rem; font-size:.9rem;">Nicho por público</h4>
+        <p style="color:var(--muted2); font-size:.875rem; line-height:1.6;">Servidores públicos, estrangeiros, médicos. Atender apenas um perfil cria autoridade e facilita indicações.</p>
+      </div>
+      <div class="card">
+        <div class="icon-box" style="background:#FFB80015; margin-bottom:1rem;"><i data-lucide="map-pin" style="color:#FFB800;"></i></div>
+        <h4 style="color:#fff; font-weight:700; margin-bottom:.5rem; font-size:.9rem;">Nicho por região</h4>
+        <p style="color:var(--muted2); font-size:.875rem; line-height:1.6;">Ser referência na Asa Norte ou Águas Claras. O corretor especialista se sobressai muito além de sua área.</p>
+      </div>
+      <div class="card">
+        <div class="icon-box" style="background:#00E67615; margin-bottom:1rem;"><i data-lucide="home" style="color:#00E676;"></i></div>
+        <h4 style="color:#fff; font-weight:700; margin-bottom:.5rem; font-size:.9rem;">Nicho por produto</h4>
+        <p style="color:var(--muted2); font-size:.875rem; line-height:1.6;">Imóveis acima de R$ X milhões, unidades antigas para reforma, propriedades de herança. Poucos especialistas.</p>
+      </div>
+      <div class="card">
+        <div class="icon-box" style="background:#7C4DFF15; margin-bottom:1rem;"><i data-lucide="dollar-sign" style="color:#7C4DFF;"></i></div>
+        <h4 style="color:#fff; font-weight:700; margin-bottom:.5rem; font-size:.9rem;">Investidores e heranças</h4>
+        <p style="color:var(--muted2); font-size:.875rem; line-height:1.6;">Submercados com alta comissão por negócio e poucos especialistas. Clientes buscando liquidez rápida.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 FUTURO -->
+<section class="block" id="futuro">
+  <div class="container">
+    <div class="section-label">
+      <div class="tag-row"><span class="num">09</span><div class="glow-line"></div></div>
+      <h2>O Futuro do Mercado</h2>
+      <p class="subtitle">IA, marca pessoal e conteúdo audiovisual vão definir quem ganha. O corretor de 2030 será um consultor digitalizado.</p>
+    </div>
+
+    <div class="grid grid-2 mb-8">
+      <div class="card">
+        <h3>Adoção de IA no setor imobiliário</h3>
+        <p class="card-sub">Brasil vs EUA — a lacuna é uma oportunidade</p>
+        <div class="chart-wrap" style="height:250px;"><canvas id="chartIA"></canvas></div>
+      </div>
+
+      <div class="stack">
+        <div class="card kpi">
+          <div class="kpi-icon" style="background:#00E5FF15;"><i data-lucide="users" style="color:#00E5FF;"></i></div>
+          <div class="kpi-value hero-number">60%</div>
+          <div class="kpi-label">Escolhem o corretor pela confiança que passa</div>
+        </div>
+        <div class="card kpi">
+          <div class="kpi-icon" style="background:#7C4DFF15;"><i data-lucide="instagram" style="color:#7C4DFF;"></i></div>
+          <div class="kpi-value hero-number">90%+</div>
+          <div class="kpi-label">Verificam o perfil no Instagram antes de contatar</div>
+        </div>
+        <div class="card kpi">
+          <div class="kpi-icon" style="background:#FFB80015;"><i data-lucide="rocket" style="color:#FFB800;"></i></div>
+          <div class="kpi-value hero-number">2030</div>
+          <div class="kpi-label">O corretor será um consultor digitalizado</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:2rem;">
+      <h3 style="font-size:1.5rem; margin-bottom:1.5rem;">O corretor de 2030</h3>
+      <div class="grid grid-3">
+        <div class="trio">
+          <div class="icon-box" style="background:#00E5FF15;"><i data-lucide="zap" style="color:#00E5FF;"></i></div>
+          <h4>Altamente conectado</h4>
+          <p>CRM, redes sociais e IA integrados na rotina diária</p>
+        </div>
+        <div class="trio">
+          <div class="icon-box" style="background:#FFB80015;"><i data-lucide="map-pin" style="color:#FFB800;"></i></div>
+          <h4>Especialista em nicho</h4>
+          <p>Construindo confiança local e autoridade regional</p>
+        </div>
+        <div class="trio">
+          <div class="icon-box" style="background:#00E67615;"><i data-lucide="smartphone" style="color:#00E676;"></i></div>
+          <h4>Foco em vídeo</h4>
+          <p>Reels, tours em vídeo e conteúdo audiovisual como motor principal</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="cta-glow"></div>
+  <div class="cta-inner">
+    <div class="pill card" style="display:inline-flex;">
+      <i data-lucide="rocket" style="width:16px;height:16px;color:#00E5FF;"></i>
+      <span>Pronto para executar?</span>
+    </div>
+    <h2>O mercado se move<br>para quem <span class="hero-number">domina os dados</span></h2>
+    <p class="lead">Você viu os números, os gargalos e as oportunidades. Agora é hora de transformar essa inteligência em campanhas de tráfego pago que geram leads qualificados e vendas reais.</p>
+    <div class="hero-actions" style="margin-bottom:3rem;">
+      <a href="https://wa.me/5500000000000" class="btn btn-primary" style="padding:1.25rem 2.5rem;">
+        Quero aplicar essa estratégia <i data-lucide="arrow-right" style="width:18px;height:18px; vertical-align:middle; margin-left:.4rem;"></i>
+      </a>
+    </div>
+
+    <div class="cta-features">
+      <div class="trio">
+        <div class="icon-box"><i data-lucide="target" style="color:#00E5FF;"></i></div>
+        <h4>Leads qualificados</h4>
+        <p>Google + Meta Ads otimizados para conversão real</p>
+      </div>
+      <div class="trio">
+        <div class="icon-box"><i data-lucide="bar-chart-3" style="color:#00E5FF;"></i></div>
+        <h4>Dados que importam</h4>
+        <p>CPL, ROI e métricas acompanhadas de perto</p>
+      </div>
+      <div class="trio">
+        <div class="icon-box"><i data-lucide="trending-up" style="color:#00E5FF;"></i></div>
+        <h4>Resultados escaláveis</h4>
+        <p>Estratégia baseada em evidências, não achismos</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="brand">
+      <span class="logo-badge"><i data-lucide="building-2" style="width:16px;height:16px;"></i></span>
+      <span>Imobi<span class="accent">Data</span></span>
+    </div>
+    <p>Análise estratégica do mercado imobiliário de Brasília</p>
+    <p class="small">Fontes: SECOVI-DF, RE/MAX Brasil, Índice de Confiança Imobiliária e imprensa especializada · 2025</p>
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+
+// nav scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) navbar.classList.add('scrolled');
+  else navbar.classList.remove('scrolled');
+});
+
+// fade-in sections on scroll
+const sections = document.querySelectorAll('section.block');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      io.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+sections.forEach(s => io.observe(s));
+
+// zones bars (progress bar list)
+const zonasData = [
+  { zona: "Noroeste", desc: "Lançamentos de médio e alto padrão", pct: 85, color: "#00E5FF" },
+  { zona: "Sudoeste", desc: "Forte demanda por imóveis novos", pct: 75, color: "#FFB800" },
+  { zona: "Águas Claras", desc: "Expansão e alto volume de VGV", pct: 70, color: "#00E676" },
+  { zona: "Plano Piloto (usados)", desc: "R$ 13 bi movimentados em 2025", pct: 90, color: "#7C4DFF" },
+];
+const zonasList = document.getElementById('zonasList');
+zonasData.forEach(z => {
+  const div = document.createElement('div');
+  div.className = 'zone-item';
+  div.innerHTML = `
+    <div class="zone-head">
+      <div><span class="zone-name">${z.zona}</span><span class="zone-desc">${z.desc}</span></div>
+    </div>
+    <div class="zone-track"><div class="zone-fill" style="background:${z.color}; box-shadow:0 0 10px ${z.color}40;"></div></div>
+  `;
+  zonasList.appendChild(div);
+});
+// animate widths after a tick
+requestAnimationFrame(() => {
+  setTimeout(() => {
+    document.querySelectorAll('.zone-fill').forEach((el, i) => {
+      el.style.width = zonasData[i].pct + '%';
+    });
+  }, 200);
+});
+
+// mix legend
+const mixConteudoData = [
+  { name: "Educativo (bairros, financiamento)", value: 40, fill: "#00E5FF" },
+  { name: "Pessoal (bastidores, depoimentos)", value: 30, fill: "#FFB800" },
+  { name: "Tours de imóveis", value: 20, fill: "#00E676" },
+  { name: "CTA / Promocional", value: 10, fill: "#7C4DFF" },
+];
+const mixLegend = document.getElementById('mixLegend');
+mixConteudoData.forEach(item => {
+  const div = document.createElement('div');
+  div.className = 'legend-item';
+  div.innerHTML = `<span class="legend-dot" style="background:${item.fill};"></span><span class="legend-name">${item.name}</span><span class="legend-val">${item.value}%</span>`;
+  mixLegend.appendChild(div);
+});
+
+// ===== CHART.JS DEFAULTS =====
+Chart.defaults.color = '#6B8AAB';
+Chart.defaults.font.family = "Inter, sans-serif";
+
+function tooltipBase(){
+  return {
+    backgroundColor: 'rgba(15,33,56,0.95)',
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    titleColor: '#ffffff',
+    bodyColor: '#A8C5E0',
+    padding: 10,
+    displayColors: false,
+  };
+}
+const gridColor = 'rgba(255,255,255,0.05)';
+
+// 1. Corretores bar
+new Chart(document.getElementById('chartCorretores'), {
+  type: 'bar',
+  data: {
+    labels: ["Brasil (média)", "EUA (média)", "Top Agents BR"],
+    datasets: [{
+      label: 'Vendas/ano',
+      data: [2, 10, 26],
+      backgroundColor: ["#6B8AAB", "#00E676", "#00E5FF"],
+      borderRadius: 8,
+      maxBarThickness: 70,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip: tooltipBase() },
+    scales:{
+      x:{ grid:{ display:false }, ticks:{ color:'#6B8AAB', font:{size:12} } },
+      y:{ grid:{ color:gridColor }, ticks:{ color:'#6B8AAB', font:{size:12} } }
+    }
+  }
+});
+
+// 2. CPL horizontal bar
+new Chart(document.getElementById('chartCpl'), {
+  type: 'bar',
+  data: {
+    labels: ["Imóveis populares", "Médio/alto padrão"],
+    datasets: [{
+      label: 'CPL médio (R$)',
+      data: [12.5, 70],
+      backgroundColor: "#00E5FF",
+      borderRadius: 8,
+      maxBarThickness: 40,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip: tooltipBase() },
+    scales:{
+      x:{ grid:{ color:gridColor }, ticks:{ color:'#6B8AAB', font:{size:12}, callback: v => 'R$ '+v } },
+      y:{ grid:{ display:false }, ticks:{ color:'#A8C5E0', font:{size:12} } }
+    }
+  }
+});
+
+// 3. Investimento VGV
+new Chart(document.getElementById('chartVgv'), {
+  type: 'bar',
+  data: {
+    labels: ["Mínimo", "Recomendado", "Máximo"],
+    datasets: [{
+      label: '% do VGV',
+      data: [2, 3.5, 5],
+      backgroundColor: ["#6B8AAB", "#00E5FF", "#FFB800"],
+      borderRadius: 8,
+      maxBarThickness: 70,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip: tooltipBase() },
+    scales:{
+      x:{ grid:{ display:false }, ticks:{ color:'#6B8AAB', font:{size:12} } },
+      y:{ grid:{ color:gridColor }, ticks:{ color:'#6B8AAB', font:{size:12}, callback: v => v+'%' } }
+    }
+  }
+});
+
+// 4. Funil horizontal
+new Chart(document.getElementById('chartFunil'), {
+  type: 'bar',
+  data: {
+    labels: ["Leads gerados", "Qualificados", "Visitas agendadas", "Vendas fechadas"],
+    datasets: [{
+      label: '% de leads',
+      data: [100, 30, 10, 1],
+      backgroundColor: ["#00E5FF", "#00E676", "#FFB800", "#FF5252"],
+      borderRadius: 8,
+      maxBarThickness: 40,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip: tooltipBase() },
+    scales:{
+      x:{ grid:{ color:gridColor }, ticks:{ color:'#6B8AAB', font:{size:12}, callback: v => v+'%' } },
+      y:{ grid:{ display:false }, ticks:{ color:'#A8C5E0', font:{size:11} } }
+    }
+  }
+});
+
+// 5. Mix conteudo doughnut
+new Chart(document.getElementById('chartMix'), {
+  type: 'doughnut',
+  data: {
+    labels: mixConteudoData.map(d=>d.name),
+    datasets: [{
+      data: mixConteudoData.map(d=>d.value),
+      backgroundColor: mixConteudoData.map(d=>d.fill),
+      borderWidth: 0,
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    cutout:'55%',
+    plugins:{ legend:{display:false}, tooltip: tooltipBase() }
+  }
+});
+
+// 6. Gargalos horizontal
+new Chart(document.getElementById('chartGargalos'), {
+  type: 'bar',
+  data: {
+    labels: ["Custo do financiamento", "Parcelas muito altas", "Reprovação de crédito", "Outros motivos"],
+    datasets: [{
+      label: '% dos desistentes',
+      data: [22, 21, 16, 41],
+      backgroundColor: ["#FF5252", "#FFB800", "#7C4DFF", "#6B8AAB"],
+      borderRadius: 8,
+      maxBarThickness: 40,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip: tooltipBase() },
+    scales:{
+      x:{ grid:{ color:gridColor }, ticks:{ color:'#6B8AAB', font:{size:12}, callback: v => v+'%' } },
+      y:{ grid:{ display:false }, ticks:{ color:'#A8C5E0', font:{size:11} } }
+    }
+  }
+});
+
+// 7. IA adocao
+new Chart(document.getElementById('chartIA'), {
+  type: 'bar',
+  data: {
+    labels: ["Brasil", "EUA"],
+    datasets: [{
+      label: '% de adoção',
+      data: [19, 85],
+      backgroundColor: ["#FF5252", "#00E676"],
+      borderRadius: 8,
+      maxBarThickness: 90,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip: tooltipBase() },
+    scales:{
+      x:{ grid:{ display:false }, ticks:{ color:'#6B8AAB', font:{size:12} } },
+      y:{ grid:{ color:gridColor }, ticks:{ color:'#6B8AAB', font:{size:12}, callback: v => v+'%' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
